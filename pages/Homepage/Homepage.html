@@ -13,13 +13,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <script>
+
+        function askPermission() {
+            return new Promise(function (resolve, reject) {
+                const permissionResult = Notification.requestPermission(function (result) {
+                    resolve(result)
+                })
+            
+                if (permissionResult) {
+                    permissionResult.then(resolve, reject)
+                }
+            })
+            .then(function (permissionResult) {
+                if (permissionResult !== 'granted') {
+                    throw new Error('We weren\'t greanted permission.')
+                }
+            })
+        }
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker
             .register('../../sw.js')
             .then(function() {
                 console.log('Service Worker registered!')
             })
+
+            navigator.serviceWorker.ready.then(registration => {
+                if ('PushManager' in window) {
+                    document.querySelector('button.subscribe-for-push')
+                        .addEventListener('click', () => {
+                            askPermission()
+                        })
+                }
+            })
         }
+
     </script>
 </head>
 
@@ -57,7 +85,7 @@
             
             <div class="header-center">
                 <h1 class="title">Agridera Seeds and Agriculture Ltd</h1>
-                <button class="read-more">Read more</button>
+                <button class="subscribe-for-push">Subscribe</button>
             </div>
 
         </div>

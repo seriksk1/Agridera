@@ -29,3 +29,7 @@ self.addEventListener('fetch', function(event) {
     )
 })
 
+self.addEventListener('push', function(event) {
+    const notification = event.data.text();
+    self.registration.showNotification(notification, {})
+})
